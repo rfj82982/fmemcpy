@@ -18,15 +18,19 @@ TESTDIR = tests
 
 FFLAGS += -J$(INCDIR)
 
+FFILES = utils fmemcpy
+FSRC = $(addprefix $(SRCDIR)/,$(addsuffix .f90,$(FFILES)))
+FOBJ = $(addprefix $(OBJDIR)/,$(addsuffix .o,$(FFILES)))
+
 all: Fbuild
 
 test: Fbuild
-	$(FC) $(FFLAGS) $(TESTDIR)/test.f90 -o test $(OBJDIR)/fmemcpy.o $(OBJDIR)/cmemcpy.o
+	$(FC) $(FFLAGS) $(TESTDIR)/test.f90 -o test $(FOBJ) $(OBJDIR)/cmemcpy.o
 
-Fbuild: Cbuild $(OBJDIR)/fmemcpy.o
+Fbuild: Cbuild $(FOBJ)
 
-$(OBJDIR)/fmemcpy.o: $(SRCDIR)/fmemcpy.f90
-	$(FC) $(FFLAGS) -c $(SRCDIR)/fmemcpy.f90 -o $(OBJDIR)/fmemcpy.o
+$(OBJDIR)/%.o: $(SRCDIR)/%.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
 
 Cbuild: $(OBJDIR)/cmemcpy.o
 
