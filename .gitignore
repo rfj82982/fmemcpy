@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Emacs
+.dir-locals.el
+
+# Test program
+test
