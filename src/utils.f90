@@ -10,6 +10,7 @@ module utils
 
   private
   public :: is_buffer_safe
+  public :: get_mem_size
   
 contains
 
