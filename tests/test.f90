@@ -6,10 +6,25 @@ program test_fmemcpy
   
   implicit none
 
+  logical :: passing
+
+  passing = .true.
+  
   call test_scalar()
   call test_1D()
   call test_2D()
   call test_simple()
+
+  print *, "============================"
+  print *, " Overall: "
+  print *, "----------------------------"
+  if (.not. passing) then
+     print *, "FAIL"
+     stop 1
+  else
+     print *, "PASS"
+  end if
+  
 contains
   
   subroutine test_scalar()
@@ -18,6 +33,10 @@ contains
     real(kind(0.0)) :: c, d
     real(kind(0.0d0)) :: e, f
 
+    logical :: test_passing
+
+    test_passing = .true.
+
     print *, "============================"
     print *, " TEST scalar "
     print *, "----------------------------"
@@ -25,21 +44,23 @@ contains
     a = 1
     c = 1.0
     e = 1.0d0
-
-    print *, "Source Data:"
-    print *, "Ints: ", a
-    print *, "Floats: ", c
-    print *, "Doubles: ", e
   
     call memcpy(b, a, 1 * 4) ! 32 bit int
     call memcpy(d, c, 1 * 4) ! 32 bit float
     call memcpy(f, e, 1 * 8) ! 64 bit double
 
-    print *, "Destination Data:"
-    print *, "Ints: ", b
-    print *, "Floats: ", d
-    print *, "Doubles: ", e
+    test_passing = test_passing .and. (a - b == 0)
+    test_passing = test_passing .and. (c - d == 0.0)
+    test_passing = test_passing .and. (e - f == 0.0d0)
 
+    if (test_passing) then
+       print *, "PASS"
+    else
+       print *, "FAIL"
+    end if
+    
+    passing = passing .and. test_passing
+    
   end subroutine test_scalar
   
   subroutine test_1D()
@@ -49,6 +70,10 @@ contains
     real(kind(0.0d0)), dimension(5) :: e, f
     integer :: i
 
+    logical :: test_passing
+
+    test_passing = .true.
+    
     print *, "============================"
     print *, " TEST 1D "
     print *, "----------------------------"
@@ -58,21 +83,23 @@ contains
        c(i) = real(i, kind(0.0))
        e(i) = real(i, kind(0.0d0))
     end do
-
-    print *, "Source Data:"
-    print *, "Ints: ", a
-    print *, "Floats: ", c
-    print *, "Doubles: ", e
   
     call memcpy(b, a, 5 * 4) ! 32 bit int
     call memcpy(d, c, 5 * 4) ! 32 bit float
     call memcpy(f, e, 5 * 8) ! 64 bit double
 
-    print *, "Destination Data:"
-    print *, "Ints: ", b
-    print *, "Floats: ", d
-    print *, "Doubles: ", e
+    test_passing = test_passing .and. (sum(a - b) == 0)
+    test_passing = test_passing .and. (sum(c - d) == 0.0)
+    test_passing = test_passing .and. (sum(e - f) == 0.0d0)
 
+    if (test_passing) then
+       print *, "PASS"
+    else
+       print *, "FAIL"
+    end if
+    
+    passing = passing .and. test_passing
+    
   end subroutine test_1D
   
   subroutine test_2D()
@@ -82,6 +109,10 @@ contains
     real(kind(0.0d0)), dimension(2, 2) :: e, f
     integer :: i, j
     integer :: ctr
+
+    logical :: test_passing
+
+    test_passing = .true.
     
     print *, "============================"
     print *, " TEST 2D "
@@ -97,20 +128,22 @@ contains
           ctr = ctr + 1
        end do
     end do
-
-    print *, "Source Data:"
-    print *, "Ints: ", a
-    print *, "Floats: ", c
-    print *, "Doubles: ", e
   
     call memcpy(b, a, 4 * 4) ! 32 bit int
     call memcpy(d, c, 4 * 4) ! 32 bit float
     call memcpy(f, e, 4 * 8) ! 64 bit double
 
-    print *, "Destination Data:"
-    print *, "Ints: ", b
-    print *, "Floats: ", d
-    print *, "Doubles: ", e
+    test_passing = test_passing .and. (sum(a - b) == 0)
+    test_passing = test_passing .and. (sum(c - d) == 0.0)
+    test_passing = test_passing .and. (sum(e - f) == 0.0d0)
+
+    if (test_passing) then
+       print *, "PASS"
+    else
+       print *, "FAIL"
+    end if
+    
+    passing = passing .and. test_passing
 
   end subroutine test_2D
 
@@ -128,6 +161,10 @@ contains
     real(kind(0.0d0)), dimension(5) :: e, f
     integer :: i
 
+    logical :: test_passing
+
+    test_passing = .true.
+
     print *, "============================"
     print *, " TEST 1D - simple interface "
     print *, "----------------------------"
@@ -137,20 +174,22 @@ contains
        c(i) = real(i, kind(0.0))
        e(i) = real(i, kind(0.0d0))
     end do
-
-    print *, "Source Data:"
-    print *, "Ints: ", a
-    print *, "Floats: ", c
-    print *, "Doubles: ", e
   
     call memcpy(b, a) ! 32 bit int
     call memcpy(d, c) ! 32 bit float
     call memcpy(f, e) ! 64 bit double
 
-    print *, "Destination Data:"
-    print *, "Ints: ", b
-    print *, "Floats: ", d
-    print *, "Doubles: ", e
+    test_passing = test_passing .and. (sum(a - b) == 0)
+    test_passing = test_passing .and. (sum(c - d) == 0.0)
+    test_passing = test_passing .and. (sum(e - f) == 0.0d0)
+
+    if (test_passing) then
+       print *, "PASS"
+    else
+       print *, "FAIL"
+    end if
+    
+    passing = passing .and. test_passing
 
   end subroutine test_1D_simple
   
@@ -161,6 +200,10 @@ contains
     real(kind(0.0d0)), dimension(2, 2) :: e, f
     integer :: i, j
     integer :: ctr
+
+    logical :: test_passing
+
+    test_passing = .true.
     
     print *, "============================"
     print *, " TEST 2D - simple interface "
@@ -177,19 +220,21 @@ contains
        end do
     end do
 
-    print *, "Source Data:"
-    print *, "Ints: ", a
-    print *, "Floats: ", c
-    print *, "Doubles: ", e
-  
     call memcpy(b, a) ! 32 bit int
     call memcpy(d, c) ! 32 bit float
     call memcpy(f, e) ! 64 bit double
 
-    print *, "Destination Data:"
-    print *, "Ints: ", b
-    print *, "Floats: ", d
-    print *, "Doubles: ", e
+    test_passing = test_passing .and. (sum(a - b) == 0)
+    test_passing = test_passing .and. (sum(c - d) == 0.0)
+    test_passing = test_passing .and. (sum(e - f) == 0.0d0)
+
+    if (test_passing) then
+       print *, "PASS"
+    else
+       print *, "FAIL"
+    end if
+    
+    passing = passing .and. test_passing
 
   end subroutine test_2D_simple
   
