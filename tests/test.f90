@@ -1,5 +1,7 @@
 program test_fmemcpy
 
+  use iso_c_binding
+  
   use fmemcpy
   
   implicit none

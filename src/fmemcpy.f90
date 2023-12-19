@@ -19,6 +19,7 @@ module fmemcpy
   interface memcpy
      procedure memcpy_full
      procedure memcpy_simple
+     procedure memcpy_full_intbytes
   end interface memcpy
 
   interface
@@ -39,7 +40,7 @@ contains
     class(*), dimension(..), intent(inout) :: dst ! Destination buffer
     class(*), dimension(..), intent(in) :: src    ! Source buffer
 
-    integer :: n ! Buffer size in bytes
+    integer(c_size_t) :: n ! Buffer size in bytes
 
     ! Determine minimum buffer size
     n = get_mem_size(dst)
@@ -50,6 +51,17 @@ contains
     call memcpy_full(dst, src, n) 
     
   end subroutine memcpy_simple
+
+  ! Helper subroutine to make it easier to call the interface without needing to cast
+  subroutine memcpy_full_intbytes(dst, src, n)
+
+    class(*), dimension(..), intent(inout) :: dst ! Destination buffer
+    class(*), dimension(..), intent(in) :: src    ! Source buffer
+    integer, intent(in) :: n ! Number of bytes to copy
+
+    call memcpy_full(dst, src, int(n, c_size_t))
+    
+  end subroutine memcpy_full_intbytes
   
   ! Safe interface to memcpy, checks that the size of the source and destination arrays is large
   ! enough to transfer n bytes.
@@ -59,7 +71,7 @@ contains
 
     class(*), dimension(..), intent(inout) :: dst ! Destination buffer
     class(*), dimension(..), intent(in) :: src    ! Source buffer
-    integer, intent(in) :: n ! Number of bytes to copy
+    integer(c_size_t), intent(in) :: n ! Number of bytes to copy
 
     call check_buffers(dst, src, n)
     call memcpy_c(dst, src, n)
@@ -72,7 +84,7 @@ contains
 
     type(*), dimension(..), target, intent(inout) :: dst ! Destination buffer
     type(*), dimension(..), target, intent(in) :: src    ! Source buffer
-    integer, intent(in) :: n ! Number of bytes to copy
+    integer(c_size_t), intent(in) :: n ! Number of bytes to copy
 
     call cmemcpy(c_loc(dst), c_loc(src), int(n, c_size_t))
     
@@ -84,7 +96,7 @@ contains
 
     class(*), dimension(..), intent(inout) :: dst ! Destination buffer
     class(*), dimension(..), intent(in) :: src    ! Source buffer
-    integer, intent(in) :: n ! Number of bytes to copy
+    integer(c_size_t), intent(in) :: n ! Number of bytes to copy
 
     if (.not. is_buffer_safe(dst, n)) then
        print *, "Destination array is too small to store ", n, " bytes"
