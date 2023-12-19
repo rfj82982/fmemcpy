@@ -12,6 +12,7 @@ module utils
 
   private
   public :: is_buffer_safe
+  public :: get_mem_size
   
 contains
 
@@ -19,7 +20,7 @@ contains
   pure logical function is_buffer_safe(buf, n)
 
     class(*), dimension(..), intent(in) :: buf ! Buffer to test
-    integer, intent(in) :: n                   ! Number of bytes to transfer
+    integer(c_size_t), intent(in) :: n         ! Number of bytes to transfer
 
     is_buffer_safe = (get_mem_size(buf) >= n)
     

@@ -38,4 +38,4 @@ $(OBJDIR)/cmemcpy.o: $(SRCDIR)/cmemcpy.c
 	$(CC) $(CFLAGS) -c $(SRCDIR)/cmemcpy.c -o $(OBJDIR)/cmemcpy.o
 
 clean:
-	rm -f $(OBJDIR)/*.o $(INCDIR)/*.mod
+	rm -f $(OBJDIR)/*.o $(INCDIR)/*.mod test
