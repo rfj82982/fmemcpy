@@ -6,6 +6,8 @@
 
 module utils
 
+  use iso_c_binding
+  
   implicit none
 
   private
@@ -24,14 +26,15 @@ contains
   end function is_buffer_safe
   
   ! Utility function returning the size of its argument in bytes.
-  pure integer function get_mem_size(a)
+  pure integer(c_size_t) function get_mem_size(a)
 
     class(*), dimension(..), intent(in) :: a
 
-    integer :: nbits                        ! Number of bits used by an object
+    integer(c_size_t) :: nbits              ! Number of bits used by an object
+
     integer, parameter :: bits_per_byte = 8 ! Number of bits in a byte
 
-    nbits = storage_size(a) * size(a)
+    nbits = storage_size(a, c_size_t) * size(a)
     get_mem_size = nbits / bits_per_byte
     
   end function get_mem_size
