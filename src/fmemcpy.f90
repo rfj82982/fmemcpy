@@ -33,6 +33,41 @@ module fmemcpy
   
 contains
 
+  ! Simplest way of doing the copy and let the compiler decide everything
+  subroutine memcpy_3dequal(dst, src)
+
+    class(*), dimension(:,:,:), intent(out), allocatable :: dst ! Destination buffer
+    class(*), dimension(:,:,:), intent(in) :: src    ! Source buffer
+
+    dst = src(:,:,:)
+    !ndim = size(shape(src))
+    !select case (ndim)
+    !  case (1)
+    !    dst = src(:)
+    !  case (2)
+    !    dst = src(:,:)
+    !  case (3)
+    !    dst = src(:,:,:)
+    !  case default
+    !    write(*,*) 'Too many dimensions'
+    !end select
+    !dst(:,:,:) = src(:,:,:)
+    !select type (elem_type)
+    !  type is (integer)
+    !    write(*,*) 'Working with int'
+    !    dst(1) = 1
+    !    !a = elem_type
+    !  type is (real)
+    !    write(*,*) 'Working with real'
+    !    !dst(1,1,1) = src(1,1,1)
+    !    dst(1) = src(1)
+    !    !b = elem_type
+    !  class default
+    !    write(*,*) 'Copy operation not possible'
+    !end select
+    
+  end subroutine memcpy_3dequal
+  
   ! Simple interface to memcpy, determines the number of bytes to transfer based on the smaller of
   ! the source and destination buffers.
   subroutine memcpy_simple(dst, src)
