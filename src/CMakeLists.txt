@@ -1,5 +1,8 @@
 file(GLOB files_fmemcpy cmemcpy.c
 	                fmemcpy.f90
+			myprecision.f90
+			cpy_equal.f90
+			cpy_loop.f90
 			utils.f90)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
