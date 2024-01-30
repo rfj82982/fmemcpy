@@ -7,6 +7,16 @@ message(STATUS "Fortran compiler version ${CMAKE_Fortran_COMPILER_VERSION}")
 message(STATUS "C compiler name ${C_COMPILER_NAME}")
 message(STATUS "C compiler version ${CMAKE_C_COMPILER_VERSION}")
 
+if (ENABLE_OPENMP)
+  find_package(OpenMP)
+  if(OpenMP_Fortran_FOUND)
+    message(STATUS "OpenMP for Fotran Compiler Found, version ${OpenMP_Fortran_VERSION_MAJOR}.${OpenMP_Fortran_VERSION_MINOR}")
+  else()
+    message(ERROR_CRITICAL "No OpenMP support detected")
+  endif()
+
+endif()
+
 if (Fortran_COMPILER_NAME MATCHES "GNU")
   # gfortran
   message(STATUS "Setting gnu flags")

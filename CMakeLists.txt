@@ -9,6 +9,8 @@ set(DESCRIPTION "Building fmemcpy using cmake")
 
 message(STATUS "building ${PROJECT_NAME}")
 
+option(ENABLE_OPENMP "Allow user to activate/deactivate openMP support" ON)
+
 include(GNUInstallDirs)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})

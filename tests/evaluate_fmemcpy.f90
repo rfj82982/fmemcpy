@@ -17,9 +17,9 @@ program evaluate_fmemcpy
 
    integer :: i, j, k, m
    logical :: test_passing
-   integer :: nargin, arg, FNLength, stat, DecInd
+   integer :: nargin, arg, FNLength, stat, DecInd, ierror, ifile
    character(len=80) :: InputFN, compiler
-   character(len=15) :: fname
+   character(len=32) :: fname
    character(len=3)  :: acr
 
 
@@ -75,9 +75,17 @@ program evaluate_fmemcpy
 
    compiler = compiler_version()
 
-   print *, "Compiler version: ", compiler
-   print *, "ACR :", compiler(1:3)
-   print *, "Compiler options: ", compiler_options()
+   ! Open the output file
+   ifile = 100
+   write(fname,10) 'listing_',compiler(1:3),'_',nx,'x',ny,'x',nz,'.log'
+10 format(a8,a3,a,i4.4,a,i4.4,a,i4.4,a4)
+   open (newunit=ifile, &
+         file=fname, &
+         status="replace", &
+         iostat=ierror)
+   print *, trim(fname)
+   write(ifile,*) "Compiler version: ", compiler
+   write(ifile,*) "Compiler options: ", compiler_options()
 
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    ! Testing the copy routines
@@ -92,9 +100,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_s - src_s) == 0.0) 
    
    if (test_passing) then
-      print *, "MEMCPY SINGLE PASS time:      ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "MEMCPY SINGLE PASS time:      ", (t2-t1)/real(niter,dtype)
    else
-      print *, "MEMCPY SINGLE FAIL"
+      write(ifile,*) "MEMCPY SINGLE FAIL"
    end if
 
    ! Test interface with C for double 
@@ -107,9 +115,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_d - src_d) == 0.d0) 
    
    if (test_passing) then
-      print *, "MEMCPY DOUBLE PASS time:      ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "MEMCPY DOUBLE PASS time:      ", (t2-t1)/real(niter,dtype)
    else
-      print *, "MEMCPY DOUBLE FAIL"
+      write(ifile,*) "MEMCPY DOUBLE FAIL"
    end if
    !-------------------------------------------------------------------
    ! Test copy using equal for single
@@ -124,9 +132,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_s - src_s) == 0.0) 
    
    if (test_passing) then
-      print *, "CPY EQUAL SINGLE PASS time:   ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY EQUAL SINGLE PASS time:   ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY EQUAL SINGLE FAIL"
+      write(ifile,*) "CPY EQUAL SINGLE FAIL"
    end if
 
    ! Test copy using equal for double
@@ -139,9 +147,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_d - src_d) == 0.d0) 
    
    if (test_passing) then
-      print *, "CPY EQUAL DOUBLE PASS time:   ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY EQUAL DOUBLE PASS time:   ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY EQUAL DOUBLE FAIL"
+      write(ifile,*) "CPY EQUAL DOUBLE FAIL"
    end if
    !-------------------------------------------------------------------
    ! Test copy using equal for single
@@ -156,9 +164,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_s - src_s) == 0.0) 
    
    if (test_passing) then
-      print *, "CPY BRACKET SINGLE PASS time: ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY BRACKET SINGLE PASS time: ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY BRACKET SINGLE FAIL"
+      write(ifile,*) "CPY BRACKET SINGLE FAIL"
    end if
 
    ! Test copy using equal for double
@@ -171,9 +179,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_d - src_d) == 0.d0) 
    
    if (test_passing) then
-      print *, "CPY BRACKET DOUBLE PASS time: ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY BRACKET DOUBLE PASS time: ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY BRACKET DOUBLE FAIL"
+      write(ifile,*) "CPY BRACKET DOUBLE FAIL"
    end if
    !-------------------------------------------------------------------
    ! Test copy using equal for single
@@ -188,9 +196,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_s - src_s) == 0.0) 
    
    if (test_passing) then
-      print *, "CPY LOOP3D SINGLE PASS time:  ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY LOOP3D SINGLE PASS time:  ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY LOOP3D SINGLE FAIL"
+      write(ifile,*) "CPY LOOP3D SINGLE FAIL"
    end if
 
    ! Test copy using equal for double
@@ -203,9 +211,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_d - src_d) == 0.d0) 
    
    if (test_passing) then
-      print *, "CPY LOOP3D DOUBLE PASS time:  ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY LOOP3D DOUBLE PASS time:  ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY LOOP3D DOUBLE FAIL"
+      write(ifile,*) "CPY LOOP3D DOUBLE FAIL"
    end if
    !-------------------------------------------------------------------
    ! Test copy using equal for single
@@ -220,9 +228,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_s - src_s) == 0.0) 
    
    if (test_passing) then
-      print *, "CPY DOCON SINGLE PASS time:   ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY DOCON SINGLE PASS time:   ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY DOCON SINGLE FAIL"
+      write(ifile,*) "CPY DOCON SINGLE FAIL"
    end if
 
    ! Test copy using equal for double
@@ -235,9 +243,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_d - src_d) == 0.d0) 
    
    if (test_passing) then
-      print *, "CPY DOCON DOUBLE PASS time:   ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY DOCON DOUBLE PASS time:   ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY DOCON DOUBLE FAIL"
+      write(ifile,*) "CPY DOCON DOUBLE FAIL"
    end if
    !-------------------------------------------------------------------
    ! Test copy using equal for single
@@ -252,9 +260,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_s - src_s) == 0.0) 
    
    if (test_passing) then
-      print *, "CPY LOOP2D SINGLE PASS time:  ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY LOOP2D SINGLE PASS time:  ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY LOOP2D SINGLE FAIL"
+      write(ifile,*) "CPY LOOP2D SINGLE FAIL"
    end if
 
    ! Test copy using equal for double
@@ -267,9 +275,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_d - src_d) == 0.d0) 
    
    if (test_passing) then
-      print *, "CPY LOOP2D DOUBLE PASS time:  ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY LOOP2D DOUBLE PASS time:  ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY LOOP2D DOUBLE FAIL"
+      write(ifile,*) "CPY LOOP2D DOUBLE FAIL"
    end if
 
    !-------------------------------------------------------------------
@@ -285,9 +293,9 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_s - src_s) == 0.0) 
    
    if (test_passing) then
-      print *, "CPY LOOP1D SINGLE PASS time:  ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY LOOP1D SINGLE PASS time:  ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY LOOP1D SINGLE FAIL"
+      write(ifile,*) "CPY LOOP1D SINGLE FAIL"
    end if
 
    ! Test copy using equal for double
@@ -300,13 +308,14 @@ program evaluate_fmemcpy
    test_passing = (sum(dst_d - src_d) == 0.d0) 
    
    if (test_passing) then
-      print *, "CPY LOOP1D DOUBLE PASS time:  ", (t2-t1)/real(niter,dtype)
+      write(ifile,*) "CPY LOOP1D DOUBLE PASS time:  ", (t2-t1)/real(niter,dtype)
    else
-      print *, "CPY LOOP1D DOUBLE FAIL"
+      write(ifile,*) "CPY LOOP1D DOUBLE FAIL"
    end if
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    ! Testing the copy routines
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   close(ifile)
    deallocate (src_s, dst_s)
    deallocate (src_d, dst_d)
 
